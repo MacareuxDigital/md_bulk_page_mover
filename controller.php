@@ -24,7 +24,7 @@ class Controller extends Package
     /**
      * @var string package version
      */
-    protected $pkgVersion = 'MdBulkPageMover';
+    protected $pkgVersion = '0.0.1';
 
     /**
      * @var array Autoload custom classes
