@@ -6,8 +6,7 @@
 namespace Macareux\BulkPageMover\Console\Command;
 
 use Concrete\Core\Console\Command;
-use Concrete\Core\Page\Page;
-use Concrete\Core\Page\PageList;
+use Macareux\BulkPageMover\Traits\PageMoveTrait;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,14 +14,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class PageMoveCommand extends Command
 {
+    use PageMoveTrait;
+
     /**
      * @var bool|string|string[]|null
      */
-    protected $fromPath;
+    protected $pathFrom;
     /**
      * @var bool|string|string[]|null
      */
-    protected $toPath;
+    protected $pathTo;
 
     protected function configure(): void
     {
@@ -35,37 +36,40 @@ class PageMoveCommand extends Command
         ;
     }
 
+    /**
+     * @throws \Concrete\Core\Error\UserMessageException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->input = $input;
         $this->output = $output;
 
-        $this->fromPath = $input->getOption('from');
-        $this->toPath = $input->getOption('to');
+        $this->pathFrom = $input->getOption('from');
+        $this->pathTo = $input->getOption('to');
 
-        $toPage = Page::getByPath($this->toPath);
-        if (!$toPage || $toPage->isError()) {
-            $output->writeln('The destination page does not exist');
-            return 1;
-        }
-
-        $list = new PageList();
-        $list->ignorePermissions();
-        $list->includeInactivePages();
-        $list->filterByPath($this->fromPath);
-        $pages = $list->getResults();
+        $pages = $this->getPagesToMove();
         
         $progressBar = new ProgressBar($output, count($pages));
         $progressBar->setFormat('debug');
         $progressBar->start();
-
+        
         foreach ($pages as $page) {
             if (is_object($page) && !$page->isError()) {
-                $page->move($toPage);
+                $page->move($this->getPageTo());
                 $progressBar->advance();
             }
         }
 
         return 0;
+    }
+
+    protected function getPathFrom(): string
+    {
+        return (string) $this->pathFrom;
+    }
+
+    protected function getPathTo(): string
+    {
+        return (string) $this->pathTo;
     }
 }
