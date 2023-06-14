@@ -26,7 +26,7 @@ class Controller extends Package
     /**
      * @var string package version
      */
-    protected $pkgVersion = '0.0.1';
+    protected $pkgVersion = '0.0.2';
 
     /**
      * @var array Autoload custom classes

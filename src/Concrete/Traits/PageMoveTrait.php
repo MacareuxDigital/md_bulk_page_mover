@@ -43,6 +43,7 @@ trait PageMoveTrait
         $list = new PageList();
         $list->ignorePermissions();
         $list->includeInactivePages();
+        $list->includeSystemPages();
         $list->filterByPath($this->getPathFrom());
 
         return $list->getResults();
