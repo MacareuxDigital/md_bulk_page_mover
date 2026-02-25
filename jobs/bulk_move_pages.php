@@ -4,6 +4,13 @@
  */
 namespace Concrete\Package\MdBulkPageMover\Job;
 
+if (!class_exists('\ZendQueue\Queue') && class_exists('\Concrete\Core\Job\JobQueue')) {
+    class_alias('\Concrete\Core\Job\JobQueue', '\ZendQueue\Queue');
+}
+if (!class_exists('\ZendQueue\Message') && class_exists('\Concrete\Core\Job\JobQueueMessage')) {
+    class_alias('\Concrete\Core\Job\JobQueueMessage', '\ZendQueue\Message');
+}
+
 use Concrete\Core\Application\Application;
 use Concrete\Core\Config\Repository\Repository;
 use Concrete\Core\Job\QueueableJob;
